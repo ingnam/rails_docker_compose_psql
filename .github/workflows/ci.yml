@@ -23,22 +23,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
+      - name: Install Docker Compose manually
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-          docker compose version  # Verify installation
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version  # Verify installation
 
       - name: Set up Docker Compose
         run: |
-          docker compose up -d db
-          docker compose build demo-web
+          docker-compose up -d db
+          docker-compose build demo-web
 
       - name: Install dependencies
-        run: docker compose run --rm demo-web bundle install
+        run: docker-compose run --rm demo-web bundle install
 
       - name: Set up database
-        run: docker compose run --rm demo-web rails db:create db:migrate
+        run: docker-compose run --rm demo-web rails db:create db:migrate
 
       - name: Run tests
-        run: docker compose run --rm demo-web bundle exec rspec
+        run: docker-compose run --rm demo-web bundle exec rspec
