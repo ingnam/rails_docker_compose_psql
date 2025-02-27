@@ -2,7 +2,6 @@ version: '3'
 services:
   db:
     image: postgres:14.2-alpine
-    container_name: demo-postgres-14.2
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command:
@@ -13,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5433:5433"
-  demo-web:
+  web:
     build: .
     command: "./bin/rails server"
     environment:
@@ -24,12 +23,11 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
     volumes:
-      - app-storage:/rails/storage
+      - .:/app
     depends_on:
       - db
     ports:
       - "3000:3000"
 
 volumes:
-  postgres_data: {}
-  app-storage: {}
+  postgres_data:

@@ -32,13 +32,13 @@ jobs:
       - name: Set up Docker Compose
         run: |
           docker-compose up -d db
-          docker-compose build demo-web
+          docker-compose build web
 
       - name: Install dependencies
-        run: docker-compose run --rm demo-web bundle install
+        run: docker-compose run --rm web bundle install
 
       - name: Set up database
-        run: docker-compose run --rm demo-web bundle exec rails db:create db:migrate
+        run: docker-compose run --rm web bundle exec rails db:create db:migrate
 
       - name: Run tests
-        run: docker-compose run --rm demo-web bundle exec rspec
+        run: docker-compose run --rm web bundle exec rspec
