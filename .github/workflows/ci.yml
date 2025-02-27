@@ -1,0 +1,38 @@
+name: Rails CI with Docker & PostgreSQL
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: myapp_test
+        ports:
+          - "5432:5432"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          docker-compose up -d db
+          docker-compose build demo-web
+
+      - name: Install dependencies
+        run: docker-compose run --rm demo-web bundle install
+
+      - name: Set up database
+        run: docker-compose run --rm demo-web rails db:create db:migrate
+
+      - name: Run tests
+        run: docker-compose run --rm demo-web bundle exec rspec
