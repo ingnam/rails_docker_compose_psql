@@ -38,7 +38,7 @@ jobs:
         run: docker-compose run --rm demo-web bundle install
 
       - name: Set up database
-        run: docker-compose run --rm demo-web rails db:create db:migrate
+        run: docker-compose run --rm demo-web bundle exec rails db:create db:migrate
 
       - name: Run tests
         run: docker-compose run --rm demo-web bundle exec rspec
